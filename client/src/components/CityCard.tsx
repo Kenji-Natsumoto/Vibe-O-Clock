@@ -1,19 +1,20 @@
 /**
  * CityCard - Main city observation panel
  * Design: Observatory instrument panel with glow accents, refined depth
- * Contains: analog clock, digital clock, city stats, news ticker, map link
+ * Contains: analog clock, digital clock, city stats, news ticker, map link, remove button
  */
 import { useState, useEffect } from "react";
-import { MapPin, ExternalLink, Users, Briefcase, AlertTriangle, Newspaper, ChevronRight, Compass } from "lucide-react";
+import { MapPin, ExternalLink, Users, Briefcase, AlertTriangle, Newspaper, ChevronRight, Compass, X } from "lucide-react";
 import AnalogClock from "./AnalogClock";
 import DigitalClock from "./DigitalClock";
 import type { CityInfo } from "@/lib/cityData";
 
 interface CityCardProps {
   city: CityInfo;
+  onRemove?: () => void;
 }
 
-export default function CityCard({ city }: CityCardProps) {
+export default function CityCard({ city, onRemove }: CityCardProps) {
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
   const [newsTransition, setNewsTransition] = useState(false);
 
@@ -32,13 +33,26 @@ export default function CityCard({ city }: CityCardProps) {
 
   return (
     <div
-      className="flex flex-col h-full rounded-lg border overflow-hidden transition-all duration-500 hover:scale-[1.01] group"
+      className="flex flex-col h-full rounded-lg border overflow-hidden transition-all duration-500 hover:scale-[1.01] group relative"
       style={{
         borderColor: `color-mix(in oklch, ${city.accentColor} 20%, var(--border))`,
         boxShadow: `0 0 20px color-mix(in oklch, ${city.accentColor} 8%, transparent), 0 4px 20px rgba(0,0,0,0.1)`,
       }}
     >
-      {/* Card inner with subtle gradient bg */}
+      {/* Remove button */}
+      {onRemove && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full flex items-center justify-center bg-background/80 backdrop-blur-sm border border-border/60 text-muted-foreground hover:text-destructive hover:border-destructive/40 transition-all opacity-0 group-hover:opacity-100 sm:opacity-60"
+          title="この都市を削除"
+        >
+          <X size={12} />
+        </button>
+      )}
+
       <div
         className="flex flex-col h-full"
         style={{
